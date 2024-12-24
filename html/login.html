@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RipTire Login</title>
+  <style>
+    :root {
+      --main-theme-color: #0bd800;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #222222;
+    }
+
+    .container {
+      width: 300px;
+      padding: 20px;
+      background: #000000;
+      border: 1px solid var(--main-theme-color);
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      overflow: hidden;
+    }
+
+    h1 {
+      font-size: 20px;
+      margin-bottom: 20px;
+      color: var(--main-theme-color);
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+      position: relative;
+      overflow: hidden;
+      max-height: 200px; /* Достаточно для содержимого */
+      transition: max-height 0.5s ease-in-out, opacity 0.5s ease-in-out;
+    }
+
+    #password-form-group,
+    #confirm-password-form-group {
+      max-height: 0;
+      opacity: 0;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      text-align: left;
+      color: var(--main-theme-color);
+      opacity: 1;
+      transform: translateY(0);
+      transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+    }
+
+    input {
+      width: 100%;
+      padding: 8px;
+      box-sizing: border-box;
+      border: 1px solid var(--main-theme-color);
+      background-color: #000000;
+      color: var(--main-theme-color);
+      border-radius: 4px;
+      outline: none; /* Убираем выделение */
+      opacity: 1;
+      transform: translateY(0);
+      transition: opacity 0.3s ease-in-out 0.2s, transform 0.3s ease-in-out 0.2s;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      background-color: #068f00;
+      color: #73ff6a;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 10px;
+      font-size: large;
+    }
+
+    button:hover {
+      background-color: #0a6100;
+    }
+
+    button:disabled {
+      background-color: #4c4c4c;
+      cursor: not-allowed;
+      color: #000;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>System Penetration</h1>
+  <div class="form-group" id="login-form-group">
+    <label for="login">Бревните внутрь</label>
+    <input type="text" id="login" placeholder="Enter login">
+  </div>
+  <div class="form-group" id="password-form-group">
+    <label for="password">Пропуск слово</label>
+    <input type="password" id="password" placeholder="Enter password" disabled>
+  </div>
+  <div class="form-group" id="confirm-password-form-group">
+    <label for="confirm-password">Снова пропуск слово</label>
+    <input type="password" id="confirm-password" placeholder="Confirm new password" disabled>
+  </div>
+  <button id="submit-button" disabled>Submit</button>
+
+</div>
+
+<script>
+  const loginInput = document.getElementById('login');
+  const passwordFormGroup = document.getElementById('password-form-group');
+  const confirmPasswordFormGroup = document.getElementById('confirm-password-form-group');
+  const submitButton = document.getElementById('submit-button');
+  const passwordInput = document.getElementById('password');
+  const confirmPasswordInput = document.getElementById('confirm-password');
+
+  const apiEndpoint = 'http://localhost:8000/api';
+
+  let checkUserExistenceTimeout;
+
+  loginInput.addEventListener('input', () => {
+    hidePasswordFields();
+    clearTimeout(checkUserExistenceTimeout);
+    checkUserExistenceTimeout = setTimeout(() => {
+      fetch(`${apiEndpoint}/login-info`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ login: loginInput.value })
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.isExist) {
+            if (data.hasPassword) {
+              showPasswordFields();
+            } else {
+              showPasswordFields(true);
+            }
+          }
+        });
+    }, 2000);
+  });
+
+  submitButton.addEventListener('click', () => {
+    fetch(`${apiEndpoint}/auth`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        login: loginInput.value,
+        password: passwordInput.value
+      })
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (data.isAuth) {
+          sessionStorage.setItem('authToken', data.token);
+          window.location.href = 'interface.html';
+        } else {
+          handleAuthenticationFailure();
+        }
+      });
+  });
+
+  passwordInput.addEventListener('input', updateSubmitButtonState);
+  confirmPasswordInput.addEventListener('input', updateSubmitButtonState);
+
+  function hidePasswordFields() {
+    passwordInput.disabled = true;
+    confirmPasswordInput.disabled = true;
+    submitButton.disabled = true;
+    passwordInput.value = '';
+    confirmPasswordInput.value = '';
+    passwordFormGroup.style.maxHeight = '0';
+    passwordFormGroup.style.opacity = '0';
+    confirmPasswordFormGroup.style.maxHeight = '0';
+    confirmPasswordFormGroup.style.opacity = '0';
+  }
+
+  function showPasswordFields(isNewPassword = false) {
+    passwordInput.disabled = false;
+    passwordFormGroup.style.maxHeight = '200px'; // Или auto, если содержимое динамическое
+    passwordFormGroup.style.opacity = '1';
+    if (isNewPassword) {
+      confirmPasswordInput.disabled = false;
+      confirmPasswordFormGroup.style.maxHeight = '200px';
+      confirmPasswordFormGroup.style.opacity = '1';
+    } else {
+      confirmPasswordInput.disabled = true;
+      confirmPasswordInput.value = '';
+      confirmPasswordFormGroup.style.maxHeight = '0';
+      confirmPasswordFormGroup.style.opacity = '0';
+    }
+  }
+
+  function updateSubmitButtonState() {
+    const password = passwordInput.value;
+    const confirmPassword = confirmPasswordInput.value;
+    const isConfirmPasswordVisible = !confirmPasswordInput.disabled;
+
+    if (isConfirmPasswordVisible) {
+      submitButton.disabled = password !== confirmPassword || password === '';
+    } else {
+      submitButton.disabled = password === '';
+    }
+  }
+
+  function handleAuthenticationFailure() {
+    submitButton.disabled = true;
+    passwordInput.value = '';
+    confirmPasswordInput.value = '';
+    document.documentElement.style.setProperty('--main-theme-color', '#ff0000');
+    setTimeout(() => {
+      document.documentElement.style.setProperty('--main-theme-color', '#0bd800');
+    }, 300);
+  }
+</script>
+</body>
+</html>

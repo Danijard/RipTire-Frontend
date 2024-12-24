@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Tektur:wght@400..900&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RipTire Access</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <style>
+
+    /* Base styles */
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #2c3e50;
+    }
+
+    /* Typography */
+    span {
+      color: white;
+      font: 20px 'Tektur', sans-serif;
+    }
+
+    label {
+      margin-top: 2px;
+      font: 10px 'Tektur', sans-serif;
+    }
+
+    p {
+      font: 16px 'Tektur', sans-serif;
+    }
+
+    /* Стилизация скроллбара */
+    ::-webkit-scrollbar {
+      width: 10px;
+      background-color: #34495e; /* Фон трека */
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background-color: #e74c3c; /* Цвет бегунка */
+      border-radius: 10px;
+      border: 2px solid #34495e; /* Рамка бегунка */
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background-color: #c0392b; /* Цвет бегунка при наведении */
+    }
+
+    /* Стилизация скроллбара для Firefox */
+    * {
+      scrollbar-width: thin;
+      scrollbar-color: #e74c3c #34495e;
+    }
+
+    /* Header section */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #000000;
+      padding: 5px 10px;
+      height: 65px;
+    }
+
+    .header-left,
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .header-center {
+      flex-grow: 1;
+      display: flex;
+      justify-content: center;
+    }
+
+    .header-span {
+      margin: 25px;
+    }
+
+    .logo {
+      height: 50px;
+    }
+
+    .exit-button {
+      font: 20px 'Tektur', sans-serif;
+      margin: 5px;
+      padding: 15px 30px;
+      font-size: 20px;
+      background-color: #e74c3c;
+      color: white;
+      border: 1px solid black;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .exit-button:hover {
+      background-color: #c0392b;
+    }
+
+    /* Main content section */
+    .main-content {
+      display: flex;
+      flex-direction: column;
+      margin: 10px;
+      border: 3px solid #e74c3c;
+      height: calc(100vh - 105px);
+    }
+
+    .top-bar {
+      height: 30px;
+      background-color: #3b4a5a;
+      display: flex;
+      align-items: stretch;
+    }
+
+    .top-bar button {
+      border: none;
+      border-right: 1px solid black;
+      font-size: 16px;
+      background-color: #4e6576;
+      color: white;
+      cursor: pointer;
+      padding: 0 6px;
+      transform-origin: left center;
+      transition: transform 0.3s ease, background-color 0.3s ease;
+      flex-shrink: 0;
+    }
+
+    .top-bar button:nth-child(-n+5):not(.active) {
+      transform: scaleX(0);
+      width: 0;
+      padding: 0;
+      border-right: none;
+      overflow: hidden;
+    }
+
+    .top-bar button span {
+      display: inline-block;
+      width: fit-content;
+      padding: 0 6px;
+    }
+
+    .top-bar button:last-child {
+      border-right: none;
+    }
+
+    .top-bar button:hover {
+      background-color: #5a758a;
+    }
+
+    .top-bar button.active {
+      background-color: #6c89a2;
+      font-weight: bold;
+      border-bottom: 2px solid #ffffff;
+      transform: scaleX(1);
+      width: auto;
+      padding: 0 6px;
+      border-right: 1px solid black;
+      overflow: visible;
+    }
+
+    .bottom {
+      flex-grow: 1;
+      background-color: #2c3e50;
+      overflow: auto;
+      padding: 10px;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* Content elements */
+    .container {
+      display: grid;
+
+    }
+
+    .service-centers-element {
+      display: grid;
+      grid-template-columns: 300px 300px  auto auto 150px;
+      align-items: flex-start;
+      padding: 15px;
+      background-color: #3b4a5a;
+      border-radius: 5px;
+      box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.3);
+      gap: 20px;
+      margin-bottom: 15px;
+    }
+
+    .service-centers-element:hover {
+      background-color: #2c3e50;
+    }
+
+    .centers-element,
+    .upload-element {
+      display: flex;
+      align-items: flex-start;
+      padding: 15px;
+      background-color: #3b4a5a;
+      border-radius: 5px;
+      box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.3);
+      gap: 20px;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+    }
+
+    .upload-element-wrapper {
+      display: flex;
+      flex-direction: row;
+      gap: 10px;
+      align-items: center;
+      border-right: 2px solid #888888;
+      padding-right: 20px;
+      width: 120px;
+      flex-shrink: 0;
+    }
+
+    .upload-element-text {
+      color: white;
+      font: 20px 'Tektur', sans-serif;
+      white-space: nowrap;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Form elements */
+    .date-picker-wrapper,
+    .status-select-wrapper,
+    .city-select-wrapper {
+      display: flex;
+      flex-direction: column;
+      color: white;
+      width: 150px; /* Adjusted width for consistency */
+    }
+
+    .date-picker-wrapper label,
+    .status-select-wrapper label,
+    .city-select-wrapper label {
+      font-size: 14px;
+      text-align: left;
+    }
+
+    .date-picker-wrapper {
+      width: 120px; /* Specific width for date picker */
+    }
+
+    .date-input,
+    .status-select,
+    .city-select {
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      background-color: #4e6576;
+      color: white;
+      border: none;
+      padding: 8px;
+      border-radius: 5px;
+      cursor: pointer;
+      height: 38px;
+      box-sizing: border-box;
+      box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+      font: 16px 'Tektur', sans-serif;
+    }
+
+    .date-input {
+      font: 18px 'Tektur', sans-serif;
+      width: 100%;
+    }
+
+    .status-select,
+    .city-select {
+      background-image: url('data:image/svg+xml;utf8,<svg fill="white" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>');
+      background-repeat: no-repeat;
+      background-position-x: 100%;
+      background-position-y: 5px;
+    }
+
+    .status-select::-ms-expand,
+    .city-select::-ms-expand {
+      display: none;
+    }
+
+    /* Export button */
+    .export-container {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .export-button {
+      background-color: #27ae60;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: background-color 0.3s ease;
+      height: 38px;
+      box-sizing: border-box;
+      box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+    }
+
+    .export-button:hover {
+      background-color: #219653;
+    }
+
+    .xls-text {
+      color: white;
+      margin-top: 2px;
+      text-align: left;
+      font: 14px 'Tektur', sans-serif;
+    }
+
+    /* RipTire section */
+    #riptire {
+      position: relative;
+      padding: 20px;
+    }
+
+    .riptire-header {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+    }
+
+    .riptire-logo {
+      height: 80vh;
+    }
+
+    .riptire-content {
+      margin-top: 60px;
+      color: white;
+      height: calc(100vh - 400px);
+      width: calc(50vw);
+    }
+
+    .copyright {
+      margin-top: calc(100vh - 560px);
+      color: white;
+      font-size: 12px;
+      font-family: Arial, sans-serif;
+    }
+
+    /* Styles for search functionality */
+    .centers-filters {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+      align-items: center;
+    }
+
+    .centers-filters input {
+      background-color: #4e6576;
+      color: white;
+      border: none;
+      padding: 8px;
+      border-radius: 5px;
+      font: 16px 'Tektur', sans-serif;
+      box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+    }
+
+    .centers-filters button {
+      background-color: #e67e22;
+      color: white;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      font: 16px 'Tektur', sans-serif;
+      transition: background-color 0.3s ease;
+      box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+    }
+
+    .info-wrapper
+
+    .centers-filters button:hover {
+      background-color: #f39c12;
+    }
+  </style>
+</head>
+<body>
+<div class="header">
+  <div class="header-left">
+    <img src="../img/logo.png" alt="Logo" class="logo">
+  </div>
+  <div class="header-center">
+    <span class="header-span" id="role">role</span>
+  </div>
+  <div class="header-right">
+    <span class="header-span" id="name">name</span>
+    <button class="exit-button">Выходить</button>
+  </div>
+</div>
+<div class="main-content">
+  <div class="top-bar">
+    <button data-tab="client"><span>|Client|</span></button>
+    <button data-tab="order"><span>|Order|</span></button>
+    <button data-tab="service"><span>|Service|</span></button>
+    <button data-tab="employee"><span>|Employee|</span></button>
+    <button data-tab="center"><span>|Center|</span></button>
+
+    <button data-tab="clients"><span>Клиенты</span></button>
+    <button data-tab="orders"><span>Заказы</span></button>
+    <button data-tab="services"><span>Услуги</span></button>
+    <button data-tab="employees"><span>Работники</span></button>
+    <button data-tab="centers"><span>Центры</span></button>
+    <button data-tab="upload" class="active"><span>Выгрузка</span></button>
+    <button data-tab="riptire"><span>RipTire</span></button>
+
+  </div>
+  <div class="bottom">
+    <div id="client" class="tab-content">Содержимое вкладки Клиент</div>
+    <div id="order" class="tab-content">Содержимое вкладки Заказ</div>
+    <div id="service" class="tab-content">Содержимое вкладки Услуга</div>
+    <div id="employee" class="tab-content">Содержимое вкладки Работник</div>
+    <div id="center" class="tab-content">Содержимое вкладки Центр</div>
+
+    <div id="clients" class="tab-content">Содержимое вкладки Клиенты</div>
+
+    <div id="orders" class="tab-content">Содержимое вкладки Заказы</div>
+
+    <div id="services" class="tab-content">Содержимое вкладки Услуги</div>
+
+    <div id="employees" class="tab-content">Содержимое вкладки Работники</div>
+
+    <div id="centers" class="tab-content">
+      <div class="centers-filters">
+        <input type="text" id="search-centers" placeholder="Поиск по адресу">
+        <button id="search-centers-button">Найти</button>
+        <div class="city-select-wrapper">
+          <select id="centers-city" class="city-select">
+            <option value="all">Все города</option>
+            <option value="Москва">Москва</option>
+            <option value="Санкт-Петербург">Санкт-Петербург</option>
+            <option value="Казань">Казань</option>
+          </select>
+        </div>
+      </div>
+      <div class="container"></div>
+    </div>
+
+    <div id="upload" class="tab-content active">
+      <div class="upload-element">
+        <div class="upload-element-wrapper">
+          <span class="upload-element-text">Таблица <br> Заказов</span>
+        </div>
+        <div class="city-select-wrapper">
+          <select id="order-city" class="city-select">
+            <option value="all">Все города</option>
+            <option value="moscow">Москва</option>
+            <option value="spb">Санкт-Петербург</option>
+            <option value="kazan">Казань</option>
+          </select>
+          <label for="order-city">Город</label>
+        </div>
+        <div class="date-picker-wrapper">
+          <input type="text" id="start-date-orders" class="date-input">
+          <label for="start-date-orders">Начальная дата</label>
+        </div>
+        <div class="date-picker-wrapper">
+          <input type="text" id="end-date-orders" class="date-input">
+          <label for="end-date-orders">Конечная дата</label>
+        </div>
+        <div class="status-select-wrapper">
+          <select id="order-status" class="status-select">
+            <option value="all">Все</option>
+            <option value="pending">В обработке</option>
+            <option value="completed">Выполнено</option>
+            <option value="cancelled">Отменено</option>
+          </select>
+          <label for="order-status">Статус заказа</label>
+        </div>
+        <div class="export-container">
+          <button class="export-button">
+            <span>Экспорт</span>
+          </button>
+          <div class="xls-text">.xls</div>
+        </div>
+      </div>
+
+      <div class="upload-element">
+        <div class="upload-element-wrapper">
+          <span class="upload-element-text">Таблица <br> Клиентов</span>
+        </div>
+        <div class="city-select-wrapper">
+          <select id="client-city" class="city-select">
+            <option value="all">Все города</option>
+            <option value="moscow">Москва</option>
+            <option value="spb">Санкт-Петербург</option>
+            <option value="kazan">Казань</option>
+          </select>
+          <label for="client-city">Город</label>
+        </div>
+        <div class="date-picker-wrapper">
+          <input type="text" id="start-date" class="date-input">
+          <label for="start-date">Начальная дата</label>
+        </div>
+        <div class="date-picker-wrapper">
+          <input type="text" id="end-date" class="date-input">
+          <label for="end-date">Конечная дата</label>
+        </div>
+        <div class="export-container">
+          <button class="export-button">
+            <span>Экспорт</span>
+          </button>
+          <div class="xls-text">.xls</div>
+        </div>
+      </div>
+
+      <div class="upload-element">
+        <div class="upload-element-wrapper">
+          <span class="upload-element-text">Таблица <br> Работников</span>
+        </div>
+        <div class="city-select-wrapper">
+          <select id="employee-city" class="city-select">
+            <option value="all">Все города</option>
+            <option value="moscow">Москва</option>
+            <option value="spb">Санкт-Петербург</option>
+            <option value="kazan">Казань</option>
+          </select>
+          <label for="employee-city">Город</label>
+        </div>
+        <div class="date-picker-wrapper">
+          <input type="text" id="start-date-employees" class="date-input">
+          <label for="start-date-employees">Начальная дата</label>
+        </div>
+        <div class="date-picker-wrapper">
+          <input type="text" id="end-date-employees" class="date-input">
+          <label for="end-date-employees">Конечная дата</label>
+        </div>
+        <div class="export-container">
+          <button class="export-button">
+            <span>Экспорт</span>
+          </button>
+          <div class="xls-text">.xls</div>
+        </div>
+      </div>
+
+      <div class="upload-element">
+        <div class="upload-element-wrapper">
+          <span class="upload-element-text">Таблица <br> Работ</span>
+        </div>
+        <div class="export-container">
+          <button class="export-button">
+            <span>Экспорт</span>
+          </button>
+          <div class="xls-text">.xls</div>
+        </div>
+      </div>
+
+      <div class="upload-element">
+        <div class="upload-element-wrapper">
+          <span class="upload-element-text">Таблица <br> Центров</span>
+        </div>
+        <div class="city-select-wrapper">
+          <select id="center-city" class="city-select">
+            <option value="all">Все города</option>
+            <option value="moscow">Москва</option>
+            <option value="spb">Санкт-Петербург</option>
+            <option value="kazan">Казань</option>
+          </select>
+          <label for="center-city">Город</label>
+        </div>
+        <div class="date-picker-wrapper">
+          <input type="text" id="start-date-centers" class="date-input">
+          <label for="start-date-centers">Начальная дата</label>
+        </div>
+        <div class="date-picker-wrapper">
+          <input type="text" id="end-date-centers" class="date-input">
+          <label for="end-date-centers">Конечная дата</label>
+        </div>
+        <div class="export-container">
+          <button class="export-button">
+            <span>Экспорт</span>
+          </button>
+          <div class="xls-text">.xls</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="riptire" class="tab-content">
+      <div class="riptire-header">
+        <img src="../img/logo-hd.png" alt="RipTire Logo" class="riptire-logo">
+      </div>
+      <div class="riptire-content">
+        <p>Проект [название проекта] стал для нас чем-то большим, чем просто задачей.
+          Это была настоящая одиссея творчества, поиска решений и иногда даже неожиданных откровений.
+          Мы вложили в него все: от первых пробных идей до финальных деталей, которые делали картину завершённой.
+          <br><br>
+          Вдохновение приходило отовсюду – из наших размышлений, обсуждений, а порой даже из современных технологий,
+          которые так удивительно отражают человеческую способность к созиданию.
+          Однако каждый шаг мы делали с полным осознанием того, что главный двигатель этого проекта – наши сердца, разум и упорство.
+          <br><br>
+          Каждая строчка, каждый образ – это отражение нашей общей работы.
+          И пусть где-то искусство и техника пересеклись, итогом стало именно то, к чему мы стремились: живое, уникальное творение.
+          <br><br>
+          Настоящим текстом подтверждаем, что весь проект, включая данный текст, был выполнен полностью своими руками, и ни одна нейросеть <b>ТОЧНО</b> не была использована для этого.
+        </p>
+
+        <div class="copyright">
+          © 2024 Скосырский Д.А., Симонов Т.П.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const apiUrl = 'http://localhost:8000/api';
+
+  const tabs = document.querySelectorAll('.main-content .top-bar button');
+  const tabContents = document.querySelectorAll('.main-content .bottom .tab-content');
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const tabId = tab.dataset.tab;
+
+      tabs.forEach(t => t.classList.remove('active'));
+      tabContents.forEach(content => content.classList.remove('active'));
+
+      tab.classList.add('active');
+      document.getElementById(tabId).classList.add('active');
+    });
+  });
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const activeTabButton = document.querySelector('.main-content .top-bar button.active');
+    const activeTabContent = document.querySelector('.main-content .bottom .tab-content.active');
+    if (activeTabButton) {
+      activeTabButton.classList.remove('active');
+    }
+    if (activeTabContent) {
+      activeTabContent.classList.remove('active');
+    }
+
+    const riptireTab = document.querySelector('.main-content .top-bar button[data-tab="riptire"]');
+    const riptireContent = document.getElementById('riptire');
+
+    if (riptireTab && riptireContent) {
+      riptireTab.classList.add('active');
+      riptireContent.classList.add('active');
+    }
+
+    flatpickr("#start-date", {
+      dateFormat: "d.m.Y",
+      defaultDate: "2023.01.01",
+    });
+    flatpickr("#end-date", {
+      dateFormat: "d.m.Y",
+      defaultDate: new Date(),
+    });
+    flatpickr("#start-date-centers", {
+      dateFormat: "d.m.Y",
+      defaultDate: "2023.01.01",
+    });
+    flatpickr("#end-date-centers", {
+      dateFormat: "d.m.Y",
+      defaultDate: new Date(),
+    });
+    flatpickr("#start-date-employees", {
+      dateFormat: "d.m.Y",
+      defaultDate: "2023.01.01",
+    });
+    flatpickr("#end-date-employees", {
+      dateFormat: "d.m.Y",
+      defaultDate: new Date(),
+    });
+    flatpickr("#start-date-orders", {
+      dateFormat: "d.m.Y",
+      defaultDate: "2023.01.01",
+    });
+    flatpickr("#end-date-orders", {
+      dateFormat: "d.m.Y",
+      defaultDate: new Date(),
+    });
+  });
+
+  fetch(apiUrl + '/user-info', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      token: sessionStorage.getItem('authToken')
+    })
+  })
+    .then(response => response.json())
+    .then(data => {
+      document.getElementById('name').textContent = data.name;
+      document.getElementById('role').textContent = data.role;
+    });
+
+  const exitButton = document.querySelector('.exit-button');
+  exitButton.addEventListener('click', () => {
+    window.location.href = 'index.html';
+  });
+
+  // Search and filter functionality for Centers tab
+  const searchCentersInput = document.getElementById('search-centers');
+  const searchCentersButton = document.getElementById('search-centers-button');
+  const centersCitySelect = document.getElementById('centers-city');
+
+  function showCenterAddress(event) {
+    const clickedElement = event.currentTarget; // Получаем элемент, на который кликнули
+    const address = clickedElement.querySelector('.adress').textContent;
+    openTab('center');
+    // Здесь можно добавить любой другой код, например, открыть модальное окно с информацией
+  }
+
+  searchCentersButton.addEventListener('click', filterCenters);
+  centersCitySelect.addEventListener('change', filterCenters);
+
+  function jsonToHtmlCenters(jsonData) {
+    const centersDiv = document.getElementById('centers');
+    if (!centersDiv) {
+      console.error('Элемент с id "centers" не найден.');
+      return;
+    }
+
+    if (!jsonData || !jsonData.table) {
+      console.warn('JSON не содержит данных о центрах.');
+      return;
+    }
+
+    const table = jsonData.table;
+
+    for (const id in table) {
+      if (table.hasOwnProperty(id)) {
+        const centerData = table[id];
+
+        const centerElement = document.createElement('div');
+        centerElement.classList.add('service-centers-element');
+        centerElement.dataset.id = id;
+
+        // Адрес
+        const addressWrapper = document.createElement('div');
+        addressWrapper.classList.add('info-wrapper');
+        const addressSpan = document.createElement('span');
+        addressSpan.classList.add('adress');
+        addressSpan.textContent = centerData.address;
+        addressWrapper.appendChild(addressSpan);
+        centerElement.appendChild(addressWrapper);
+
+        // Город
+        const cityWrapper = document.createElement('div');
+        cityWrapper.classList.add('info-wrapper');
+        const citySpan = document.createElement('span');
+        citySpan.classList.add('city');
+        citySpan.textContent = centerData.city;
+        cityWrapper.appendChild(citySpan);
+        centerElement.appendChild(cityWrapper);
+
+        // Тип
+        const typeWrapper = document.createElement('div');
+        typeWrapper.classList.add('info-wrapper');
+        const typeLabel = document.createElement('label');
+        typeLabel.textContent = 'Тип:';
+        const typeSpan = document.createElement('span');
+        typeSpan.textContent = centerData.type;
+        typeWrapper.appendChild(typeLabel);
+        typeWrapper.appendChild(typeSpan);
+        centerElement.appendChild(typeWrapper);
+
+        // Телефон
+        const phoneWrapper = document.createElement('div');
+        phoneWrapper.classList.add('info-wrapper');
+        const phoneLabel = document.createElement('label');
+        phoneLabel.textContent = 'Телефон:';
+        const phoneSpan = document.createElement('span');
+        phoneSpan.textContent = centerData.contact_phone;
+        phoneWrapper.appendChild(phoneLabel);
+        phoneWrapper.appendChild(phoneSpan);
+        centerElement.appendChild(phoneWrapper);
+
+        // Работники
+        const employeesWrapper = document.createElement('div');
+        employeesWrapper.classList.add('info-wrapper');
+        const employeesLabel = document.createElement('label');
+        employeesLabel.textContent = 'Работники:';
+        const employeesSpan = document.createElement('span');
+        employeesSpan.textContent = centerData.employee_count;
+        employeesWrapper.appendChild(employeesLabel);
+        employeesWrapper.appendChild(employeesSpan);
+        centerElement.appendChild(employeesWrapper);
+
+        centersDiv.appendChild(centerElement);
+      }
+    }
+
+    const serviceCenterElements = document.querySelectorAll('#centers .service-centers-element');
+
+    serviceCenterElements.forEach(element => {
+      element.addEventListener('click', showCenterAddress);
+    });
+  }
+
+  // Пример использования:
+  const jsonData = {
+    "table": {
+      "1": {
+        "type": "auto",
+        "city": "Москва",
+        "address": "ул. Тверская, д. 10",
+        "postal_code": "125009",
+        "contact_phone": "+7 495 123-45-67",
+        "employee_count": 50,
+        "info": "Автосалон, продажа новых автомобилей",
+        "time_created": "2024-12-23T08:00:00Z"
+      },
+      "2": {
+        "type": "moto",
+        "city": "Санкт-Петербург",
+        "address": "ул. Невский, д. 25",
+        "postal_code": "190000",
+        "contact_phone": "+7 812 234-56-78",
+        "employee_count": 20,
+        "info": "Магазин мототехники и аксессуаров",
+        "time_created": "2024-12-23T08:10:00Z"
+      },
+      "3": {
+        "type": "auto",
+        "city": "Казань",
+        "address": "ул. Баумана, д. 35",
+        "postal_code": "420111",
+        "contact_phone": "+7 843 345-67-89",
+        "employee_count": 30,
+        "info": "Автосервис, ремонт автомобилей",
+        "time_created": "2024-12-23T08:15:00Z"
+      },
+      "4": {
+        "type": "moto",
+        "city": "Екатеринбург",
+        "address": "ул. Ленина, д. 12",
+        "postal_code": "620014",
+        "contact_phone": "+7 343 456-78-90",
+        "employee_count": 10,
+        "info": "Продажа мотоциклов и комплектующих",
+        "time_created": "2024-12-23T08:20:00Z"
+      },
+      "5": {
+        "type": "auto",
+        "city": "Новосибирск",
+        "address": "ул. Красный проспект, д. 50",
+        "postal_code": "630000",
+        "contact_phone": "+7 383 567-89-01",
+        "employee_count": 60,
+        "info": "Торговля подержанными автомобилями",
+        "time_created": "2024-12-23T08:25:00Z"
+      },
+      "6": {
+        "type": "moto",
+        "city": "Челябинск",
+        "address": "ул. Комсомольская, д. 8",
+        "postal_code": "454080",
+        "contact_phone": "+7 351 678-90-12",
+        "employee_count": 5,
+        "info": "Мотоциклы и скутеры, прокат",
+        "time_created": "2024-12-23T08:30:00Z"
+      },
+      "7": {
+        "type": "auto",
+        "city": "Самара",
+        "address": "ул. Гагарина, д. 14",
+        "postal_code": "443010",
+        "contact_phone": "+7 846 789-01-23",
+        "employee_count": 40,
+        "info": "Автозапчасти и аксессуары",
+        "time_created": "2024-12-23T08:35:00Z"
+      },
+      "8": {
+        "type": "moto",
+        "city": "Уфа",
+        "address": "ул. Орджоникидзе, д. 27",
+        "postal_code": "450000",
+        "contact_phone": "+7 347 890-12-34",
+        "employee_count": 8,
+        "info": "Мотоциклы и ремонт",
+        "time_created": "2024-12-23T08:40:00Z"
+      },
+      "9": {
+        "type": "auto",
+        "city": "Волгоград",
+        "address": "ул. Дзержинского, д. 5",
+        "postal_code": "400010",
+        "contact_phone": "+7 844 901-23-45",
+        "employee_count": 70,
+        "info": "Автосалон, продажа автомобилей",
+        "time_created": "2024-12-23T08:45:00Z"
+      },
+      "10": {
+        "type": "moto",
+        "city": "Красноярск",
+        "address": "ул. Мира, д. 13",
+        "postal_code": "660000",
+        "contact_phone": "+7 391 234-56-78",
+        "employee_count": 12,
+        "info": "Мотоциклы и аксессуары",
+        "time_created": "2024-12-23T08:50:00Z"
+      },
+      "11": {
+        "type": "auto",
+        "city": "Пермь",
+        "address": "ул. Красивая, д. 22",
+        "postal_code": "614000",
+        "contact_phone": "+7 342 345-67-89",
+        "employee_count": 20,
+        "info": "Автосервис, диагностика",
+        "time_created": "2024-12-23T08:55:00Z"
+      },
+      "12": {
+        "type": "moto",
+        "city": "Тюмень",
+        "address": "ул. Чапаева, д. 19",
+        "postal_code": "625000",
+        "contact_phone": "+7 345 456-78-90",
+        "employee_count": 9,
+        "info": "Мотоциклы и ремонт",
+        "time_created": "2024-12-23T09:00:00Z"
+      },
+      "13": {
+        "type": "auto",
+        "city": "Омск",
+        "address": "ул. Ленина, д. 100",
+        "postal_code": "644000",
+        "contact_phone": "+7 381 567-89-01",
+        "employee_count": 90,
+        "info": "Продажа подержанных автомобилей",
+        "time_created": "2024-12-23T09:05:00Z"
+      },
+      "14": {
+        "type": "moto",
+        "city": "Воронеж",
+        "address": "ул. Пушкинская, д. 15",
+        "postal_code": "394000",
+        "contact_phone": "+7 473 678-90-12",
+        "employee_count": 7,
+        "info": "Мотоциклы и запчасти",
+        "time_created": "2024-12-23T09:10:00Z"
+      },
+      "15": {
+        "type": "auto",
+        "city": "Рязань",
+        "address": "ул. Московская, д. 45",
+        "postal_code": "390000",
+        "contact_phone": "+7 491 789-01-23",
+        "employee_count": 25,
+        "info": "Автозапчасти и аксессуары",
+        "time_created": "2024-12-23T09:15:00Z"
+      },
+      "16": {
+        "type": "moto",
+        "city": "Калуга",
+        "address": "ул. Студенческая, д. 6",
+        "postal_code": "248000",
+        "contact_phone": "+7 484 890-12-34",
+        "employee_count": 6,
+        "info": "Мотоциклы и экипировка",
+        "time_created": "2024-12-23T09:20:00Z"
+      },
+      "17": {
+        "type": "auto",
+        "city": "Тольятти",
+        "address": "ул. Центральная, д. 30",
+        "postal_code": "445000",
+        "contact_phone": "+7 848 901-23-45",
+        "employee_count": 40,
+        "info": "Автосервис и кузовной ремонт",
+        "time_created": "2024-12-23T09:25:00Z"
+      },
+      "18": {
+        "type": "moto",
+        "city": "Ижевск",
+        "address": "ул. Красногеройская, д. 9",
+        "postal_code": "426000",
+        "contact_phone": "+7 341 234-56-78",
+        "employee_count": 15,
+        "info": "Мотоциклы и аксессуары",
+        "time_created": "2024-12-23T09:30:00Z"
+      },
+      "19": {
+        "type": "auto",
+        "city": "Барнаул",
+        "address": "ул. Ленина, д. 2",
+        "postal_code": "656000",
+        "contact_phone": "+7 385 345-67-89",
+        "employee_count": 30,
+        "info": "Автосалон, продажа новых автомобилей",
+        "time_created": "2024-12-23T09:35:00Z"
+      },
+      "20": {
+        "type": "moto",
+        "city": "Томск",
+        "address": "ул. Советская, д. 7",
+        "postal_code": "634050",
+        "contact_phone": "+7 382 456-78-90",
+        "employee_count": 5,
+        "info": "Мотоциклы и скутеры, прокат",
+        "time_created": "2024-12-23T09:40:00Z"
+      }
+    }
+  };
+
+  // Вызываем функцию для преобразования и отображения данных
+  jsonToHtmlCenters(jsonData);
+
+  // Добавляем функцию для фильтрации после генерации элементов
+  function filterCenters() {
+    const searchTerm = document.getElementById('search-centers').value.toLowerCase();
+    const selectedCity = document.getElementById('centers-city').value.toLowerCase();
+    const serviceCenterElements = document.querySelectorAll('#centers .service-centers-element');
+
+    serviceCenterElements.forEach(element => {
+      const address = element.querySelector('.adress').textContent.toLowerCase();
+      const city = element.querySelector('.city').textContent.toLowerCase();
+      const cityMatch = selectedCity === 'all' || city === selectedCity;
+      const addressMatch = address.includes(searchTerm);
+
+      if (cityMatch && addressMatch) {
+        element.style.display = 'grid';
+      } else {
+        element.style.display = 'none';
+      }
+    });
+  }
+
+  function openTab(tabId) {
+    const tabButton = document.querySelector(`.top-bar button[data-tab="${tabId}"]`);
+    const tabContent = document.getElementById(tabId);
+
+    if (tabButton && tabContent) {
+      // Сначала деактивируем все активные вкладки и кнопки
+      document.querySelectorAll('.top-bar button.active').forEach(button => button.classList.remove('active'));
+      document.querySelectorAll('.bottom .tab-content.active').forEach(content => content.classList.remove('active'));
+
+      // Активируем нужную вкладку и кнопку
+      tabButton.classList.add('active');
+      tabContent.classList.add('active');
+    } else {
+      console.error(`Вкладка с ID "${tabId}" не найдена.`);
+    }
+  }
+
+  // Назначаем обработчики событий для фильтрации
+  document.addEventListener('DOMContentLoaded', () => {
+    const searchCentersButton = document.getElementById('search-centers-button');
+    const centersCitySelect = document.getElementById('centers-city');
+
+    if (searchCentersButton) {
+      searchCentersButton.addEventListener('click', filterCenters);
+    }
+    if (centersCitySelect) {
+      centersCitySelect.addEventListener('change', filterCenters);
+      // Вызываем фильтрацию при загрузке страницы, чтобы учесть значение по умолчанию в селекте
+      filterCenters();
+    }
+  });
+</script>
+</body>
+</html>
